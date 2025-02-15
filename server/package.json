@@ -7,10 +7,6 @@
     "start": "node server",
     "dev": "nodemon server"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/eden-max-stack/NextJSApp.git"
-  },
   "author": "Akshada Kashyap",
   "license": "ISC",
   "bugs": {
