@@ -28,7 +28,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // routes
-app.use('/', require('./routes/api/events'));
+app.use('/api/events', require('./routes/api/events'));
 
 // error handler
 app.use(errorHandler);

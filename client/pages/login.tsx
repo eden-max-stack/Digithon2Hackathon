@@ -1,26 +1,33 @@
 "use client";
 import React, { useState } from "react";
-import axios from 'axios';
+import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { auth } from './firebase/config';
+import { useRouter } from 'next/navigation';
 
 const Login: React.FC = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [message, setMessage] = useState('');
+    
+    const [signInWithEmailandPassword, user, loading, error] = useSignInWithEmailAndPassword(auth);   
+
+    const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:8087/auth', {
-                user: username,
-                password: password,
-                },
-                { withCredentials: true}
-            );
+            const res = await signInWithEmailandPassword(username, password);
+            if (user) {
+                console.log({res});
+                sessionStorage.setItem('user', true);
+                setUsername('');
+                setPassword('');
+                router.push('/helloworld')
+            }
 
-            console.log(response.data);
-            setMessage(response.data.success);
-            console.log("Success!");
+            console.log("Success! User signed in.");
+        } catch(error) {
+            console.error(`error: ${error}`);
         }
     }
     return (
@@ -43,8 +50,15 @@ const Login: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)} 
                 required 
                 />
-                <button type="submit">Login</button>
+                <button type="submit" disabled={loading}>
+                    {loading ? "Signing In..." : "Sign In"}
+                </button>
             </form>
+            {error && <p style={{ color: "red" }}>Error: {error.message}</p>}
+            <div className="leadToRegister">
+                <h4>Don't have an account?</h4>
+                <button onClick={() => router.push('/register')}>Register</button>
+            </div>
         </div>
     );
 };
